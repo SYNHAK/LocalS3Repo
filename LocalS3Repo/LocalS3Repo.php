@@ -1,53 +1,41 @@
 <?php
  /**
- * A repository for files accessible via the Amazon S3 service, treated as local filesystem.
- * Does not support database access or registration.
+ * A repository for files accessible via the Amazon S3 service, treated
+ * as local filesystem.
  *
- * Based on LocalFile.php, LocalRepo.php, FSRepo.php, File.php and OldLocalFile.php (ver 1.16-alpha, r69121)
- *
- *** Installation instructions ***
-Need to add to the end of LocalSettings.php:
-
-// AWS access info
-// s3 filesystem repo
-// Location of files in S3:
-//	http://s3.amazonaws.com/$wgUploadS3Bucket/$wgUploadDirectory/.....
-$wgUploadS3Bucket = '---change me----'; // ******* Your S3 bucket to be used *******
-$wgUploadDirectory = 'wiki-images'; // prefix to uploaded files
-$wgUploadS3SSL = false; // true if SSL should be used
-$wgPublicS3 = true; // true if public, false if authentication should be used
-$wgS3BaseUrl = "http".($wgUploadS3SSL?"s":"")."://s3.amazonaws.com/$wgUploadS3Bucket";
-$wgUploadBaseUrl = "$wgS3BaseUrl/$wgUploadDirectory";
-$wgLocalFileRepo = array(
-	'AWS_ACCESS_KEY' => '---change me----', // ********** Your S3 access key *************
-	'AWS_SECRET_KEY' => '---change me----', // ********** Your S3 secret key *************
-	'class' => 'LocalS3Repo',
-	'name' => 's3',
-	'directory' => $wgUploadDirectory,
-	'url' => $wgUploadBaseUrl ? $wgUploadBaseUrl . $wgUploadPath : $wgUploadPath,
-	'urlbase' => $wgS3BaseUrl ? $wgS3BaseUrl : "",
-	'hashLevels' => $wgHashedUploadDirectory ? 2 : 0,
-	'thumbScriptUrl' => $wgThumbnailScriptPath,
-	'transformVia404' => !$wgGenerateThumbnailOnParse,
-	'initialCapital' => $wgCapitalLinks,
-	'deletedDir' => $wgUploadDirectory.'/deleted',
-	'deletedHashLevels' => $wgFileStore['deleted']['hash'],
-	'AWS_S3_BUCKET' => $wgUploadS3Bucket,
-	'AWS_S3_PUBLIC' => $wgPublicS3,
-	'AWS_S3_SSL' => $wgUploadS3SSL
-);
-require_once("$IP/extensions/LocalS3Repo/LocalS3Repo.php");
-// s3 filesystem repo - end
- ***
+ * @file
  * @ingroup FileRepo
+ * @author Ejcaputo, John "Seg" Seggerson
+ * @copyright © 2010-2013 Ejcaputo and others
+ * @license GNU General Public License 2.0 or later
  */
- 
+
+if ( !defined( 'MEDIAWIKI' ) ) {
+	echo( "This file is part of an extension to the MediaWiki software and cannot be used standalone.\n" );
+	die( 1 );
+}
+
+/**
+ * Register extension setup hook and credits
+ */
+$wgExtensionCredits['parserhook'][] = array(
+	'path' => __FILE__,
+	'name' => 'LocalS3Repo',
+	'descriptionmsg' => 'locals3repo-desc',
+	'version' => '1.0.1',
+	'author' => 'Ejcaputo &amp; John "Seg" Seggerson',
+	'url' => 'https://www.mediawiki.org/wiki/Extension:LocalS3Repo',
+);
+
+/**
+  * Include files.
+ */
 if (!class_exists('S3')) require_once 'S3.php';
 require_once("$IP/extensions/LocalS3Repo/FSs3Repo.php");
 require_once("$IP/extensions/LocalS3Repo/LocalS3File.php");
 require_once("$IP/extensions/LocalS3Repo/OldLocalS3File.php");
 
- // Instantiate the class
+// Instantiate the class
 $s3 = new S3();
 
 class LocalS3Repo extends FSs3Repo {

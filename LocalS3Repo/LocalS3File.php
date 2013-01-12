@@ -16,7 +16,7 @@ define( 'MW_FILE_VERSION', 8 );
  * to generate image thumbnails or for uploading.
  *
  * Note that only the repo object knows what its file class is called. You should
- * never name a file class explictly outside of the repo class. Instead use the
+ * never name a file class explicitly outside of the repo class. Instead use the
  * repo's factory functions to generate file objects, for example:
  *
  * RepoGroup::singleton()->getLocalRepo()->newFile($title);
@@ -26,6 +26,12 @@ define( 'MW_FILE_VERSION', 8 );
  *
  * @ingroup FileRepo
  */
+
+if ( !defined( 'MEDIAWIKI' ) ) {
+	echo( "This file is part of an extension to the MediaWiki software and cannot be used standalone.\n" );
+	die( 1 );
+}
+
 class LocalS3File extends File {
 	/**#@+
 	 * @private
@@ -613,7 +619,7 @@ class LocalS3File extends File {
 			$thumb = $this->handler->doTransform( $this, $thumbTempPath, $thumbUrl, $params );
 			wfDebug( __METHOD__. " thumb: ".print_r($thumb->url,true)."\n" );
 			$s3path = $thumbPath;
-			$info = $s3->putObjectFile($thumbTempPath, $this->repo->AWS_S3_BUCKET, $s3path, 
+			$info = $s3->putObject($thumbTempPath, $this->repo->AWS_S3_BUCKET, $s3path, 
 							($this->repo->AWS_S3_PUBLIC ? S3::ACL_PUBLIC_READ : S3::ACL_PRIVATE));
 			wfDebug(__METHOD__." thumbTempPath: $thumbTempPath, dest: $s3path\ninfo:".print_r($info,true)."\n");
 

@@ -5,6 +5,12 @@
  *
  * @ingroup FileRepo
  */
+
+if ( !defined( 'MEDIAWIKI' ) ) {
+	echo( "This file is part of an extension to the MediaWiki software and cannot be used standalone.\n" );
+	die( 1 );
+}
+
 class OldLocalS3File extends LocalS3File {
 	var $requestedTime, $archive_name;
 
